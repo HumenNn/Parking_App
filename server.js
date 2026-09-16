@@ -1,106 +1,97 @@
-const express = require("express");
-const app = express();
+const express = require('express');
+const { ParkingSpace } = require('./models');
 
+const app = express();
 app.use(express.json());
 
 const PORT = 3000;
 
-let spaces = [
-  {
-    id: 1,
-    number: "A1",
-    isAvailable: true,
-    pricePerHour: 5,
-    location: "Первый этаж",
-  },
-  {
-    id: 2,
-    number: "A2",
-    isAvailable: false,
-    pricePerHour: 5,
-    location: "Первый этаж",
-  },
-  {
-    id: 3,
-    number: "B1",
-    isAvailable: true,
-    pricePerHour: 7,
-    location: "Второй этаж",
-  },
-];
-
-let nextId = 4;
-
-app.get("/spaces", (req, res) => {
-  res.json(spaces);
+app.get('/', async (req, res) => {
+  try {
+    const spaces = await ParkingSpace.findAll();
+    res.json(spaces);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.get("/spaces/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const space = spaces.find((s) => s.id === id);
-  if (!space) {
-    return res.status(404).json({ error: "Место с таким ID не найдено" });
+app.get('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const space = await ParkingSpace.findByPk(id);
+    if (!space) {
+      return res.status(404).json({ error: 'Место с таким ID не существует' });
+    }
+    res.json(space);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  res.json(space);
 });
 
-app.post("/spaces", (req, res) => {
-  const { number, isAvailable, pricePerHour, location } = req.body;
-  if (!number || pricePerHour === undefined) {
-    return res
-      .status(400)
-      .json({ error: "Необходимо указать number и pricePerHour" });
+app.post('/', async (req, res) => {
+  try {
+    const { number, isAvailable, pricePerHour, location, capacity } = req.body;
+    if (!number || pricePerHour === undefined) {
+      return res.status(400).json({ error: 'Необходимо указать number и pricePerHour' });
+    }
+    const newSpace = await ParkingSpace.create({
+      number,
+      isAvailable: isAvailable !== undefined ? isAvailable : true,
+      pricePerHour,
+      location: location || 'Не указано',
+      capacity: capacity !== undefined ? capacity : 1
+    });
+    res.status(201).json(newSpace);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-  const newSpace = {
-    id: nextId++,
-    number,
-    isAvailable: isAvailable !== undefined ? isAvailable : true,
-    pricePerHour,
-    location: location || "Не указано",
-  };
-  spaces.push(newSpace);
-  res.status(201).json(newSpace);
 });
 
-app.put("/spaces/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const { number, isAvailable, pricePerHour, location } = req.body;
-  const spaceIndex = spaces.findIndex((s) => s.id === id);
-  if (spaceIndex === -1) {
-    return res.status(404).json({ error: "Место не найдено" });
+app.put('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { number, isAvailable, pricePerHour, location, capacity } = req.body;
+    const space = await ParkingSpace.findByPk(id);
+    if (!space) {
+      return res.status(404).json({ error: 'Место не найдено' });
+    }
+    if (!number || pricePerHour === undefined) {
+      return res.status(400).json({ error: 'Необходимо указать number и pricePerHour' });
+    }
+    await space.update({
+      number,
+      isAvailable: isAvailable !== undefined ? isAvailable : true,
+      pricePerHour,
+      location: location || 'Не указано',
+      capacity: capacity !== undefined ? capacity : 1
+    });
+    res.json(space);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-  if (!number || pricePerHour === undefined) {
-    return res
-      .status(400)
-      .json({ error: "Необходимо указать number и pricePerHour" });
-  }
-  spaces[spaceIndex] = {
-    id,
-    number,
-    isAvailable: isAvailable !== undefined ? isAvailable : true,
-    pricePerHour,
-    location: location || "Не указано",
-  };
-  res.json(spaces[spaceIndex]);
 });
 
-app.delete("/spaces/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const index = spaces.findIndex((s) => s.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: "Место не найдено" });
+app.delete('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const space = await ParkingSpace.findByPk(id);
+    if (!space) {
+      return res.status(404).json({ error: 'Место не найдено' });
+    }
+    await space.destroy();
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  spaces.splice(index, 1);
-  res.status(204).send();
 });
 
 app.use((req, res) => {
-  res.status(404).json({ error: "Маршрут не найден" });
+  res.status(404).json({ error: 'Маршрут не найден' });
 });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Внутренняя ошибка сервера" });
+  res.status(500).json({ error: 'Внутренняя ошибка сервера' });
 });
 
 app.listen(PORT, () => {
