@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://localhost:3000/
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "number": "C3",
+      "isAvailable": true,
+      "pricePerHour": 6,
+      "location": "Третий этаж",
+      "capacity": 2
+    }
+order: 3566347906636448

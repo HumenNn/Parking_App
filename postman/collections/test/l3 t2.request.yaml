@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:3000/auth/register
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "email": "admin@parking.local",
+      "password": "admin12345",
+      "role": "admin"
+    }
+order: 4423886564267473

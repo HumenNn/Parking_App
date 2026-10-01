@@ -1,0 +1,7 @@
+$kind: http-request
+name: l3 t3
+url: http://localhost:3000/profile
+method: GET
+headers:
+  Authorization: "{{bearer_token_1dga}}"
+order: 4496522310355233

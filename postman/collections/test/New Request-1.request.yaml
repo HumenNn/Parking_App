@@ -1,0 +1,15 @@
+$kind: http-request
+name: New Request
+url: http://localhost:3000/5
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "number": "C3",
+      "isAvailable": false,
+      "pricePerHour": 8,
+      "location": "Третий этаж",
+      "capacity": 4
+    }
+order: 3640942349142804

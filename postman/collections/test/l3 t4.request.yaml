@@ -1,0 +1,11 @@
+$kind: http-request
+url: http://localhost:3000/auth/login
+method: POST
+body:
+  type: json
+  content: |
+    {
+      "email": "user@parking.local",
+      "password": "user12345"
+    }
+order: 4501609194431963
