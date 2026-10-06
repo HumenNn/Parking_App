@@ -1,0 +1,12 @@
+<header>
+  <h1><a href="/">Parking_App</a></h1>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/add">Добавить место</a>
+    <% if (user && user.name && user.name !== 'Гость') { %>
+      <a href="/logout">Выйти (<%= user.name %>)</a>
+    <% } else { %>
+      <a href="/login">Войти</a>
+    <% } %>
+  </nav>
+</header>

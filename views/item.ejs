@@ -1,0 +1,13 @@
+<h2>Место <%= space.number %></h2>
+
+<table style="max-width: 520px; margin-top: 16px;">
+  <tr><th>ID</th><td><%= space.id %></td></tr>
+  <tr><th>Номер</th><td><%= space.number %></td></tr>
+  <tr><th>Доступность</th><td><%= space.isAvailable ? 'Свободно' : 'Занято' %></td></tr>
+  <tr><th>Цена за час</th><td><%= space.pricePerHour %> BYN</td></tr>
+  <tr><th>Расположение</th><td><%= space.location %></td></tr>
+</table>
+
+<p style="margin-top: 24px;">
+  <a href="/" class="btn">← Назад к списку</a>
+</p>

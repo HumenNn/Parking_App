@@ -1,0 +1,31 @@
+<h2>Список парковочных мест</h2>
+<p style="margin: 12px 0 20px; color: #555;">Всего мест: <%= spaces.length %></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Номер</th>
+      <th>Доступность</th>
+      <th>Цена за час</th>
+      <th>Расположение</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% spaces.forEach(function(space) { %>
+      <tr>
+        <td><%= space.id %></td>
+        <td><%= space.number %></td>
+        <td><%= space.isAvailable ? 'Свободно' : 'Занято' %></td>
+        <td><%= space.pricePerHour %> BYN</td>
+        <td><%= space.location %></td>
+        <td><a href="/item/<%= space.id %>" class="btn">Открыть</a></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<p style="margin-top: 24px;">
+  <a href="/add" class="btn">Добавить новое место</a>
+</p>

@@ -1,0 +1,22 @@
+<h2>Добавить новое парковочное место</h2>
+
+<form method="POST" action="/add" style="max-width: 480px; margin-top: 16px;">
+  <label for="number">Номер места</label>
+  <input type="text" id="number" name="number" required placeholder="Например, C3">
+
+  <label for="pricePerHour">Цена за час (BYN)</label>
+  <input type="number" id="pricePerHour" name="pricePerHour" required min="1" placeholder="6">
+
+  <label for="location">Расположение</label>
+  <input type="text" id="location" name="location" placeholder="Третий этаж">
+
+  <label>
+    <input type="checkbox" name="isAvailable" checked> Свободно
+  </label>
+
+  <button type="submit" class="btn">Сохранить</button>
+</form>
+
+<p style="margin-top: 24px;">
+  <a href="/" class="btn">← Назад к списку</a>
+</p>

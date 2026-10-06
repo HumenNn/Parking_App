@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title || 'Parking_App' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/header', { user: typeof user !== 'undefined' ? user : null }) %>
+  <main>
+    <%- body %>
+  </main>
+  <%- include('partials/footer') %>
+</body>
+</html>
