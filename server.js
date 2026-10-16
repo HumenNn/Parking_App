@@ -43,7 +43,7 @@ app.get('/add', simulateAuth, (req, res) => {
 app.post('/add', simulateAuth, async (req, res, next) => {
   try {
     const number = (req.body.number || '').trim();
-    const pricePerHour = parseFloat(req.body.pricePerHour);
+    const pricePerHour = parseFloat(String(req.body.pricePerHour).replace(',', '.'));
     const location = (req.body.location || '').trim();
 
     if (!number) {
