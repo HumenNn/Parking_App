@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Парковка — список мест</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #1a73e8; }
+    .btn { display: inline-block; padding: 8px 16px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 4px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Список парковочных мест</h1>
+  <a href="/add?auth=1" class="btn">Добавить место</a>
+  <br><br>
+  <% if (spaces.length === 0) { %>
+    <p>Мест пока нет.</p>
+  <% } else { %>
+    <% spaces.forEach(function(s) { %>
+      <div class="card">
+        <strong><%= s.number %></strong> — <%= s.location || 'Не указано' %> —
+        <%= s.pricePerHour %> BYN/час —
+        <%= s.isAvailable ? 'Свободно' : 'Занято' %>
+        <br>
+        <small>Создано: <%= new Date(s.createdAt).toLocaleString('ru-RU') %></small>
+        <br>
+        <a href="/item/<%= s.id %>" class="btn">Подробнее</a>
+      </div>
+    <% }) %>
+  <% } %>
+</body>
+</html>

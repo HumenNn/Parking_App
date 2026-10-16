@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Место <%= space.number %></title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
+    h1 { color: #1a73e8; }
+    .btn { display: inline-block; padding: 8px 16px; background: #6c757d; color: #fff; text-decoration: none; border-radius: 4px; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Место <%= space.number %></h1>
+  <div class="card">
+    <p><strong>Расположение:</strong> <%= space.location || 'Не указано' %></p>
+    <p><strong>Цена:</strong> <%= space.pricePerHour %> BYN/час</p>
+    <p><strong>Статус:</strong> <%= space.isAvailable ? 'Свободно' : 'Занято' %></p>
+    <p><strong>Вместимость:</strong> <%= space.capacity || 1 %></p>
+    <p><strong>Создано:</strong> <%= new Date(space.createdAt).toLocaleString('ru-RU') %></p>
+  </div>
+  <br>
+  <a href="/" class="btn">Назад к списку</a>
+</body>
+</html>

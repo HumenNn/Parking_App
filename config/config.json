@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "nikolay",
+    "password": null,
+    "database": "parking_db",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "nikolay",
+    "password": null,
+    "database": "parking_db",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "nikolay",
+    "password": null,
+    "database": "parking_db",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
