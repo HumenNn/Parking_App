@@ -2,24 +2,92 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Место <%= space.number %></title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
-    h1 { color: #1a73e8; }
-    .btn { display: inline-block; padding: 8px 16px; background: #6c757d; color: #fff; text-decoration: none; border-radius: 4px; }
-    .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #e8eef2;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      padding: 36px;
+      max-width: 480px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #4fc3f7;
+      margin-bottom: 24px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 1.05rem;
+    }
+    .row:last-of-type { border-bottom: none; }
+    .label { color: #90a4ae; }
+    .value { font-weight: 600; }
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 18px 0 24px;
+    }
+    .badge-free { background: rgba(76, 175, 80, 0.25); color: #81c784; }
+    .badge-busy { background: rgba(244, 67, 54, 0.25); color: #e57373; }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: transparent;
+      color: #4fc3f7;
+      border: 2px solid #4fc3f7;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: rgba(79, 195, 247, 0.15); }
   </style>
 </head>
 <body>
-  <h1>Место <%= space.number %></h1>
   <div class="card">
-    <p><strong>Расположение:</strong> <%= space.location || 'Не указано' %></p>
-    <p><strong>Цена:</strong> <%= space.pricePerHour %> BYN/час</p>
-    <p><strong>Статус:</strong> <%= space.isAvailable ? 'Свободно' : 'Занято' %></p>
-    <p><strong>Вместимость:</strong> <%= space.capacity || 1 %></p>
-    <p><strong>Создано:</strong> <%= new Date(space.createdAt).toLocaleString('ru-RU') %></p>
+    <h1>🅿️ <%= space.number %></h1>
+    <div class="row">
+      <span class="label">Расположение</span>
+      <span class="value"><%= space.location || 'Не указано' %></span>
+    </div>
+    <div class="row">
+      <span class="label">Цена</span>
+      <span class="value"><%= space.pricePerHour %> BYN/час</span>
+    </div>
+    <div class="row">
+      <span class="label">Вместимость</span>
+      <span class="value"><%= space.capacity || 1 %></span>
+    </div>
+    <div class="row">
+      <span class="label">Создано</span>
+      <span class="value"><%= new Date(space.createdAt).toLocaleString('ru-RU') %></span>
+    </div>
+    <span class="badge <%= space.isAvailable ? 'badge-free' : 'badge-busy' %>">
+      <%= space.isAvailable ? '✓ Свободно' : '✗ Занято' %>
+    </span>
+    <br>
+    <a href="/" class="btn">← Назад к списку</a>
   </div>
-  <br>
-  <a href="/" class="btn">Назад к списку</a>
 </body>
 </html>

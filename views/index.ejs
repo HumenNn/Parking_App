@@ -2,32 +2,162 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Парковка — список мест</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; }
-    h1 { color: #1a73e8; }
-    .btn { display: inline-block; padding: 8px 16px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 4px; }
-    .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #e8eef2;
+      padding: 40px 20px;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    h1 span { color: #4fc3f7; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: #4fc3f7;
+      color: #0f2027;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 195, 247, 0.35);
+    }
+    .btn-outline {
+      background: transparent;
+      color: #4fc3f7;
+      border: 2px solid #4fc3f7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 22px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(79, 195, 247, 0.5);
+      transform: translateY(-3px);
+    }
+    .card-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #4fc3f7;
+      margin-bottom: 8px;
+    }
+    .card-meta {
+      font-size: 0.95rem;
+      color: #b0bec5;
+      margin-bottom: 6px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 10px 0 14px;
+    }
+    .badge-free { background: rgba(76, 175, 80, 0.25); color: #81c784; }
+    .badge-busy { background: rgba(244, 67, 54, 0.25); color: #e57373; }
+    .card-footer { margin-top: 12px; }
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #90a4ae;
+      font-size: 1.1rem;
+    }
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px 22px;
+      min-width: 120px;
+    }
+    .stat-value { font-size: 1.6rem; font-weight: 700; color: #4fc3f7; }
+    .stat-label { font-size: 0.85rem; color: #90a4ae; }
   </style>
 </head>
 <body>
-  <h1>Список парковочных мест</h1>
-  <a href="/add?auth=1" class="btn">Добавить место</a>
-  <br><br>
-  <% if (spaces.length === 0) { %>
-    <p>Мест пока нет.</p>
-  <% } else { %>
-    <% spaces.forEach(function(s) { %>
-      <div class="card">
-        <strong><%= s.number %></strong> — <%= s.location || 'Не указано' %> —
-        <%= s.pricePerHour %> BYN/час —
-        <%= s.isAvailable ? 'Свободно' : 'Занято' %>
-        <br>
-        <small>Создано: <%= new Date(s.createdAt).toLocaleString('ru-RU') %></small>
-        <br>
-        <a href="/item/<%= s.id %>" class="btn">Подробнее</a>
+  <div class="container">
+    <header>
+      <h1>🅿️ <span>Парковка</span> — места</h1>
+      <a href="/add?auth=1" class="btn">+ Добавить место</a>
+    </header>
+
+    <% const total = spaces.length; %>
+    <% const free = spaces.filter(s => s.isAvailable).length; %>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value"><%= total %></div>
+        <div class="stat-label">Всего</div>
       </div>
-    <% }) %>
-  <% } %>
+      <div class="stat">
+        <div class="stat-value"><%= free %></div>
+        <div class="stat-label">Свободно</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value"><%= total - free %></div>
+        <div class="stat-label">Занято</div>
+      </div>
+    </div>
+
+    <% if (spaces.length === 0) { %>
+      <div class="empty">Мест пока нет. Добавьте первое!</div>
+    <% } else { %>
+      <div class="grid">
+        <% spaces.forEach(function(s) { %>
+          <div class="card">
+            <div class="card-number"><%= s.number %></div>
+            <div class="card-meta">📍 <%= s.location || 'Не указано' %></div>
+            <div class="card-meta">💰 <%= s.pricePerHour %> BYN/час</div>
+            <span class="badge <%= s.isAvailable ? 'badge-free' : 'badge-busy' %>">
+              <%= s.isAvailable ? '✓ Свободно' : '✗ Занято' %>
+            </span>
+            <div class="card-meta" style="font-size:0.8rem; opacity:0.7;">
+              Создано: <%= new Date(s.createdAt).toLocaleString('ru-RU') %>
+            </div>
+            <div class="card-footer">
+              <a href="/item/<%= s.id %>" class="btn btn-outline" style="padding:8px 16px; font-size:0.9rem;">Подробнее</a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
 </body>
 </html>

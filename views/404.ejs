@@ -2,16 +2,39 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>404 — Страница не найдена</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 80px auto; text-align: center; }
-    h1 { color: #dc3545; }
-    a { color: #1a73e8; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #e8eef2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { font-size: 5rem; color: #ef5350; line-height: 1; }
+    p { color: #b0bec5; margin: 16px 0 28px; font-size: 1.15rem; }
+    a {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #4fc3f7;
+      color: #0f2027;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
-  <h1>Ошибка 404</h1>
-  <p>Страница не найдена.</p>
-  <a href="/">Вернуться на главную</a>
+  <div>
+    <h1>404</h1>
+    <p>Страница не найдена</p>
+    <a href="/">На главную</a>
+  </div>
 </body>
 </html>

@@ -2,31 +2,111 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Добавить место</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
-    h1 { color: #1a73e8; }
-    label { display: block; font-weight: bold; margin-top: 12px; }
-    input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
-    .btn { margin-top: 16px; padding: 10px 20px; background: #1a73e8; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-    .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #e8eef2;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 20px;
+      padding: 36px;
+      max-width: 440px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: #4fc3f7;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: #b0bec5;
+      margin: 16px 0 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #4fc3f7; }
+    .btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      background: #4fc3f7;
+      color: #0f2027;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 195, 247, 0.35);
+    }
+    .error {
+      background: rgba(244, 67, 54, 0.2);
+      border: 1px solid rgba(244, 67, 54, 0.4);
+      color: #ef9a9a;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #90a4ae;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back:hover { color: #4fc3f7; }
   </style>
 </head>
 <body>
-  <h1>Добавить парковочное место</h1>
-  <% if (typeof error !== 'undefined' && error) { %>
-    <div class="error"><%= error %></div>
-  <% } %>
-  <form action="/add?auth=1" method="POST">
-    <label>Номер места</label>
-    <input type="text" name="number" required minlength="1" maxlength="20" value="<%= typeof form !== 'undefined' && form.number ? form.number : '' %>">
-    <label>Цена за час (BYN)</label>
-    <input type="number" name="pricePerHour" required min="0" step="0.01" value="<%= typeof form !== 'undefined' && form.pricePerHour ? form.pricePerHour : '' %>">
-    <label>Расположение</label>
-    <input type="text" name="location" maxlength="100" value="<%= typeof form !== 'undefined' && form.location ? form.location : '' %>">
-    <button type="submit" class="btn">Добавить</button>
-  </form>
-  <br>
-  <a href="/">Назад</a>
+  <div class="card">
+    <h1>➕ Новое место</h1>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+    <form action="/add?auth=1" method="POST">
+      <label>Номер места</label>
+      <input type="text" name="number" required minlength="1" maxlength="20"
+             placeholder="например, C3"
+             value="<%= typeof form !== 'undefined' && form.number ? form.number : '' %>">
+      <label>Цена за час (BYN)</label>
+      <input type="number" name="pricePerHour" required min="0" step="0.01"
+             placeholder="0.00"
+             value="<%= typeof form !== 'undefined' && form.pricePerHour ? form.pricePerHour : '' %>">
+      <label>Расположение</label>
+      <input type="text" name="location" maxlength="100"
+             placeholder="Этаж, зона..."
+             value="<%= typeof form !== 'undefined' && form.location ? form.location : '' %>">
+      <button type="submit" class="btn">Добавить</button>
+    </form>
+    <a href="/" class="back">← Назад к списку</a>
+  </div>
 </body>
 </html>
