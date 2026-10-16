@@ -10,7 +10,7 @@ const initialSpaces = [
 ];
 
 function App() {
-  // Ленивая инициализация из localStorage
+  
   const [spaces, setSpaces] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     try {
@@ -25,7 +25,7 @@ function App() {
   const [sortBy, setSortBy] = useState('id');
   const [saveStatus, setSaveStatus] = useState('');
 
-  // Сохранение в localStorage с debounce 500 мс
+  // сделать карту парковки как при выборе мест в кинотеатре 
   useEffect(() => {
     const timer = setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(spaces));
@@ -37,7 +37,7 @@ function App() {
     return () => clearTimeout(timer);
   }, [spaces]);
 
-  // Динамический заголовок страницы
+  // 
   useEffect(() => {
     document.title = `Парковка (${spaces.length})`;
   }, [spaces.length]);
