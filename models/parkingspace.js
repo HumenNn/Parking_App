@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     number: DataTypes.STRING,
     isAvailable: DataTypes.BOOLEAN,
     pricePerHour: DataTypes.INTEGER,
-    location: DataTypes.STRING
+    location: DataTypes.STRING,
+    capacity: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'ParkingSpace',
