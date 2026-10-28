@@ -57,13 +57,23 @@ export const fetchSpaces = ({ search, available, sort, limit, offset }, signal) 
     hasMore: response.data.meta.hasMore
   }));
 
-export const fetchStats = signal => api.get('/spaces/stats', { signal }).then(response => response.data);
+export const fetchStats = signal =>
+  api.get('/spaces/stats', { signal }).then(response => response.data);
 
-export const createSpace = space => api.post('/spaces', space).then(response => response.data);
+export const createSpace = space =>
+  api.post('/spaces', space).then(response => response.data);
 
-export const updateSpace = (id, changes) => api.put(`/spaces/${id}`, changes).then(response => response.data);
+export const updateSpace = (id, changes) =>
+  api.put(`/spaces/${id}`, changes).then(response => response.data);
 
 export const deleteSpace = id => api.delete(`/spaces/${id}`);
+
+// Бронирование
+export const occupySpace = id =>
+  api.post(`/spaces/${id}/occupy`).then(r => r.data);
+
+export const releaseSpace = id =>
+  api.post(`/spaces/${id}/release`).then(r => r.data);
 
 export const isCanceled = error => axios.isCancel(error);
 
@@ -71,11 +81,21 @@ export const getStatus = error => error?.response?.status;
 
 export function getErrorMessage(error) {
   if (axios.isCancel(error)) return 'Запрос отменён';
-  if (error?.code === 'ECONNABORTED' || error?.code === 'ETIMEDOUT') return 'Сервер не ответил вовремя';
-  if (!error?.response) return 'Сервер недоступен. Проверьте подключение и что API запущен';
+  if (error?.code === 'ECONNABORTED' || error?.code === 'ETIMEDOUT') {
+    return 'Сервер не ответил вовремя';
+  }
+  if (!error?.response) {
+    return 'Сервер недоступен. Проверьте подключение и что API запущен';
+  }
   const { status, data } = error.response;
   if (status >= 500) return `Ошибка сервера (${status}). Попробуйте позже`;
   return data?.error || `Ошибка запроса (${status})`;
 }
+
+export const fetchUsers = () =>
+  api.get('/users').then((r) => r.data.data);
+
+export const updateUserMaxSpaces = (id, maxSpaces) =>
+  api.patch(`/users/${id}/max-spaces`, { maxSpaces }).then((r) => r.data);
 
 export default api;

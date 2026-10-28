@@ -1,27 +1,33 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class ParkingSpace extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      ParkingSpace.belongsTo(models.User, {
+        foreignKey: 'occupiedByUserId',
+        as: 'occupant',
+      });
     }
   }
-  ParkingSpace.init({
-    number: DataTypes.STRING,
-    isAvailable: DataTypes.BOOLEAN,
-    pricePerHour: DataTypes.INTEGER,
-    location: DataTypes.STRING,
-    capacity: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'ParkingSpace',
-  });
+
+  ParkingSpace.init(
+    {
+      number: DataTypes.STRING,
+      isAvailable: DataTypes.BOOLEAN,
+      pricePerHour: DataTypes.INTEGER,
+      capacity: DataTypes.INTEGER,
+      floor: DataTypes.INTEGER,
+      occupiedByUserId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'ParkingSpace',
+    }
+  );
+
   return ParkingSpace;
 };

@@ -1,10 +1,16 @@
-"use strict";
-const { Model } = require("sequelize");
+'use strict';
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {}
+    static associate(models) {
+      User.hasMany(models.ParkingSpace, {
+        foreignKey: 'occupiedByUserId',
+        as: 'occupiedSpaces',
+      });
+    }
   }
+
   User.init(
     {
       email: {
@@ -20,13 +26,20 @@ module.exports = (sequelize, DataTypes) => {
       role: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: "user",
+        defaultValue: 'user',
+      },
+      name: DataTypes.STRING,           // если есть
+      maxSpaces: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 2,
       },
     },
     {
       sequelize,
-      modelName: "User",
-    },
+      modelName: 'User',
+    }
   );
+
   return User;
 };
