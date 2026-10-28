@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактировать место</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh; color: #e8eef2;
+      display: flex; justify-content: center; padding: 40px 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.08); border-radius: 20px;
+      padding: 36px; max-width: 420px; width: 100%;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    h1 { color: #4fc3f7; margin-bottom: 20px; font-size: 1.4rem; }
+    label { display: block; margin: 14px 0 6px; color: #b0bec5; font-size: 0.9rem; }
+    input {
+      width: 100%; padding: 12px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.25); color: #fff;
+    }
+    .btn {
+      width: 100%; margin-top: 22px; padding: 14px; background: #4fc3f7;
+      color: #0f2027; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+    }
+    .error {
+      background: rgba(244,67,54,0.2); color: #ef9a9a; padding: 12px;
+      border-radius: 10px; margin-bottom: 12px;
+    }
+    a { color: #4fc3f7; display: block; text-align: center; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✏️ Место <%= space.number %></h1>
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <form action="/spaces/<%= space.id %>/edit" method="POST">
+      <label>Номер</label>
+      <input type="text" name="number" required maxlength="20" value="<%= space.number %>">
+      <label>Цена (BYN/час)</label>
+      <input type="number" name="pricePerHour" required min="0" max="100" step="0.01"
+             value="<%= space.pricePerHour %>">
+      <label>Этаж</label>
+      <input type="number" name="floor" required min="1" max="50" step="1" value="<%= space.floor %>">
+      <button type="submit" class="btn">Сохранить</button>
+    </form>
+    <a href="/item/<%= space.id %>">← Назад</a>
+  </div>
+</body>
+</html>

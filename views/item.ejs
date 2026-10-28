@@ -68,10 +68,6 @@
   <div class="card">
     <h1>🅿️ <%= space.number %></h1>
     <div class="row">
-      <span class="label">Расположение</span>
-      <span class="value"><%= space.location || 'Не указано' %></span>
-    </div>
-    <div class="row">
       <span class="label">Цена</span>
       <span class="value"><%= space.pricePerHour %> BYN/час</span>
     </div>
@@ -88,6 +84,7 @@
     </span>
     <br>
     <a href="/" class="btn">← Назад к списку</a>
+    <a href="/spaces/<%= space.id %>/edit">Редактировать</a>
   </div>
 </body>
 </html>

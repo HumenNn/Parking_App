@@ -2,9 +2,23 @@
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class ParkingSpace extends Model {
-    static associate(models) {}
+    static associate(models) {
+  ParkingSpace.belongsTo(models.User, {
+    foreignKey: 'occupiedByUserId',
+    as: 'occupant'
+  });
+}
   }
   ParkingSpace.init({
+    floor: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    defaultValue: 1
+    },
+    occupiedByUserId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     number: {
       type: DataTypes.STRING,
       allowNull: false
@@ -16,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
     pricePerHour: {
       type: DataTypes.FLOAT,
       allowNull: false
-    },
-    location: {
-      type: DataTypes.STRING,
-      defaultValue: 'Не указано'
     },
     capacity: {
       type: DataTypes.INTEGER,

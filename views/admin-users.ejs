@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пользователи</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh; color: #e8eef2; padding: 40px 20px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { color: #4fc3f7; margin-bottom: 8px; }
+    a { color: #4fc3f7; }
+    .error {
+      background: rgba(244,67,54,0.2); border: 1px solid rgba(244,67,54,0.4);
+      color: #ef9a9a; padding: 12px; border-radius: 10px; margin: 16px 0;
+    }
+    .panel {
+      background: rgba(255,255,255,0.06); border-radius: 14px;
+      padding: 20px; margin: 20px 0 28px;
+    }
+    label { display: block; font-size: 0.85rem; color: #b0bec5; margin: 10px 0 4px; }
+    input, select {
+      width: 100%; max-width: 320px; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.25);
+      color: #fff;
+    }
+    .btn {
+      margin-top: 14px; padding: 10px 16px; border: none; border-radius: 8px;
+      background: #4fc3f7; color: #0f2027; font-weight: 700; cursor: pointer;
+    }
+    .btn-sm { padding: 6px 10px; font-size: 0.8rem; margin: 2px; }
+    .btn-outline {
+      background: transparent; color: #4fc3f7; border: 1px solid #4fc3f7;
+    }
+    .btn-danger { background: #ef5350; color: #fff; }
+    table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    th { color: #90a4ae; font-size: 0.85rem; }
+    form.inline { display: inline; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👥 Пользователи</h1>
+    <p><a href="/">← На главную</a></p>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <div class="panel">
+      <h2 style="font-size:1.1rem; margin-bottom:8px;">Создать пользователя</h2>
+      <form action="/admin/users/create" method="POST">
+        <label>Имя (необязательно)</label>
+        <input type="text" name="name" maxlength="50">
+        <label>Email</label>
+        <input type="email" name="email" required maxlength="100">
+        <label>Пароль</label>
+        <input type="password" name="password" required minlength="6" maxlength="64">
+        <label>Роль</label>
+        <select name="role">
+          <option value="user">user</option>
+          <option value="admin">admin</option>
+        </select>
+        <br>
+        <button type="submit" class="btn">Создать</button>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя</th>
+          <th>Email</th>
+          <th>Роль</th>
+          <th>Лимит</th>
+          <th>Создан</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(function(u) { %>
+          <tr>
+            <td><%= u.id %></td>
+            <td><%= u.name || '—' %></td>
+            <td><%= u.email %></td>
+            <td><%= u.role %></td>
+            <td>
+                <form class="inline" action="/admin/users/<%= u.id %>/max-spaces" method="POST">
+                    <input type="number" name="maxSpaces" min="0" max="20" value="<%= u.maxSpaces %>"
+                     style="width:60px;">
+                    <button type="submit" class="btn btn-sm">OK</button>
+                </form>
+            </td>
+            <td><%= new Date(u.createdAt).toLocaleString('ru-RU') %></td>
+            <td>
+              <% if (u.role === 'user') { %>
+                <form class="inline" action="/admin/users/<%= u.id %>/make-admin" method="POST">
+                  <button type="submit" class="btn btn-sm">Сделать админом</button>
+                </form>
+              <% } else if (currentUser && u.id !== currentUser.id) { %>
+                <form class="inline" action="/admin/users/<%= u.id %>/make-user" method="POST">
+                  <button type="submit" class="btn btn-sm btn-outline">Снять админа</button>
+                </form>
+              <% } %>
+              <% if (currentUser && u.id !== currentUser.id) { %>
+                <form class="inline" action="/admin/users/<%= u.id %>/delete" method="POST"
+                      onsubmit="return confirm('Удалить <%= u.email %>?');">
+                  <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                </form>
+              <% } else { %>
+                <span style="color:#90a4ae; font-size:0.85rem;">(вы)</span>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
