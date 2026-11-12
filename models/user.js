@@ -1,45 +1,51 @@
-'use strict';
-const { Model } = require('sequelize');
+const mongoose = require('mongoose');
+const toJSON = require('./toJSON');
 
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate(models) {
-      User.hasMany(models.ParkingSpace, {
-        foreignKey: 'occupiedByUserId',
-        as: 'occupiedSpaces',
-      });
-    }
-  }
+const profileSchema = new mongoose.Schema(
+  {
+    name: { type: String, trim: true, maxlength: 80 },
+    phone: { type: String, trim: true },
+  },
+  { _id: false }
+);
 
-  User.init(
-    {
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: { isEmail: true },
-      },
-      passwordHash: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'user',
-      },
-      name: DataTypes.STRING,           // если есть
-      maxSpaces: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 2,
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: [true, 'Email обязателен'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, 'Некорректный email'],
+    },
+    passwordHash: { type: String, required: true },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
+    maxSpaces: {
+      type: Number,
+      default: 2,
+      min: 0,
+      max: 50,
+    },
+    profile: {
+      type: profileSchema,
+      default: () => ({}),
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      ...toJSON,
+      transform(doc, ret) {
+        const { passwordHash, ...rest } = toJSON.transform(doc, ret);
+        return rest;
       },
     },
-    {
-      sequelize,
-      modelName: 'User',
-    }
-  );
+  }
+);
 
-  return User;
-};
+module.exports = mongoose.model('User', userSchema);

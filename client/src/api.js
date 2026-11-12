@@ -4,7 +4,7 @@ export const TOKEN_KEY = 'parking:token';
 export const USER_KEY = 'parking:user';
 export const AUTH_EXPIRED_EVENT = 'parking:auth-expired';
 
-const DELAY_MS = Number(import.meta.env.VITE_API_DELAY_MS) || 0;
+const DELAY_MS = Number(import.meta.env.VITE_API_DELAY_MS) || 1;
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
@@ -13,7 +13,7 @@ const api = axios.create({
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Подставляет JWT в каждый запрос; задержка нужна только для проверки индикаторов загрузки.
+
 api.interceptors.request.use(async config => {
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -21,7 +21,7 @@ api.interceptors.request.use(async config => {
   return config;
 });
 
-// 401 на запрос с токеном означает, что сессия недействительна.
+
 api.interceptors.response.use(
   response => response,
   error => {
@@ -68,7 +68,7 @@ export const updateSpace = (id, changes) =>
 
 export const deleteSpace = id => api.delete(`/spaces/${id}`);
 
-// Бронирование
+
 export const occupySpace = id =>
   api.post(`/spaces/${id}/occupy`).then(r => r.data);
 
