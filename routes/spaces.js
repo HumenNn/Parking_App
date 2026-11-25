@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const ParkingSpace = require('../models/ParkingSpace');
-const User = require('../models/User');
+const ParkingSpace = require('../models/parkingspace');
+const User = require('../models/user');
 const { authMiddleware, isAdmin } = require('../middleware/auth');
 
 const router = express.Router();
@@ -111,6 +111,7 @@ router.post('/', authMiddleware, isAdmin, async (req, res) => {
       tags: Array.isArray(tags) ? tags : [],
     });
 
+    req.app.locals.publishSpaceChange('created', space);
     res.status(201).json(space);
   } catch (err) {
     if (err.code === 11000) {
@@ -130,12 +131,16 @@ router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
     if (req.body.isAvailable !== undefined) update.isAvailable = req.body.isAvailable;
     if (req.body.tags !== undefined) update.tags = req.body.tags;
 
+    const previous = update.floor === undefined
+      ? null
+      : await ParkingSpace.findById(req.params.id).select('floor');
     const space = await ParkingSpace.findByIdAndUpdate(
       req.params.id,
       { $set: update },
       { new: true, runValidators: true }
     );
     if (!space) return res.status(404).json({ error: 'Место не найдено' });
+    req.app.locals.publishSpaceChange('updated', space, previous?.floor);
     res.json(space);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -146,6 +151,7 @@ router.delete('/:id', authMiddleware, isAdmin, async (req, res) => {
   try {
     const space = await ParkingSpace.findByIdAndDelete(req.params.id);
     if (!space) return res.status(404).json({ error: 'Место не найдено' });
+    req.app.locals.publishSpaceChange('deleted', space);
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -172,15 +178,19 @@ router.post('/:id/occupy', authMiddleware, async (req, res) => {
       });
     }
 
-    space.isAvailable = false;
-    space.occupiedBy = {
-      userId: user._id,
-      email: user.email,
-      since: new Date(),
-    };
-    await space.save();
-
-    res.json(space);
+    const occupied = await ParkingSpace.findOneAndUpdate(
+      { _id: space._id, isAvailable: true, occupiedBy: null },
+      {
+        $set: {
+          isAvailable: false,
+          occupiedBy: { userId: user._id, email: user.email, since: new Date() },
+        },
+      },
+      { new: true }
+    );
+    if (!occupied) return res.status(400).json({ error: 'Место уже занято или удалено' });
+    req.app.locals.publishSpaceChange('occupied', occupied);
+    res.json(occupied);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -200,27 +210,32 @@ router.post('/:id/release', authMiddleware, async (req, res) => {
       return res.status(403).json({ error: 'Можно освободить только своё место' });
     }
 
+    const update = { $set: { isAvailable: true, occupiedBy: null } };
+    const reservation = space.occupiedBy
+      ? { 'occupiedBy.userId': space.occupiedBy.userId, 'occupiedBy.since': space.occupiedBy.since }
+      : { occupiedBy: null };
     if (space.occupiedBy) {
       const start = space.occupiedBy.since;
       const end = new Date();
       const hours = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60)));
       const totalPrice = hours * space.pricePerHour;
 
-      space.history.push({
-        userId: space.occupiedBy.userId,
-        email: space.occupiedBy.email,
-        startTime: start,
-        endTime: end,
-        hours,
-        totalPrice,
-      });
+      update.$push = {
+        history: {
+          userId: space.occupiedBy.userId,
+          email: space.occupiedBy.email,
+          startTime: start,
+          endTime: end,
+          hours,
+          totalPrice,
+        },
+      };
     }
 
-    space.isAvailable = true;
-    space.occupiedBy = null;
-    await space.save();
-
-    res.json(space);
+    const released = await ParkingSpace.findOneAndUpdate({ _id: space._id, ...reservation }, update, { new: true });
+    if (!released) return res.status(409).json({ error: 'Состояние места изменилось' });
+    req.app.locals.publishSpaceChange('released', released);
+    res.json(released);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -238,6 +253,7 @@ router.post('/:id/tags', authMiddleware, isAdmin, async (req, res) => {
       { new: true }
     );
     if (!space) return res.status(404).json({ error: 'Место не найдено' });
+    req.app.locals.publishSpaceChange('updated', space);
     res.json(space);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -252,6 +268,7 @@ router.delete('/:id/tags/:tag', authMiddleware, isAdmin, async (req, res) => {
       { new: true }
     );
     if (!space) return res.status(404).json({ error: 'Место не найдено' });
+    req.app.locals.publishSpaceChange('updated', space);
     res.json(space);
   } catch (err) {
     res.status(500).json({ error: err.message });

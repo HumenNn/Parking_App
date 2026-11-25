@@ -9,7 +9,7 @@ import useNotifications from './hooks/useNotifications';
 const THEME_KEY = 'parking:theme';
 
 function App() {
-  const { user, notice, login, register, logout } = useAuth();
+  const { user, token, notice, login, register, logout } = useAuth();
   const { notifications, notify, dismiss } = useNotifications();
 
   const [theme, setTheme] = useState(
@@ -52,7 +52,7 @@ function App() {
       </header>
 
       {user ? (
-        <ParkingPage key={user.id} user={user} notify={notify} />
+        <ParkingPage key={user.id} user={user} token={token} notify={notify} />
       ) : (
         <LoginForm onLogin={login} onRegister={register} notice={notice} />
       )}

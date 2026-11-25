@@ -58,5 +58,5 @@ export default function useAuth() {
     return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handleExpired);
   }, []);
 
-  return { user: session?.user ?? null, notice, login, register, logout };
+  return { user: session?.user ?? null, token: session?.token ?? null, notice, login, register, logout };
 }

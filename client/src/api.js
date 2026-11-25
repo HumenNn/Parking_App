@@ -6,8 +6,9 @@ export const AUTH_EXPIRED_EVENT = 'parking:auth-expired';
 
 const DELAY_MS = Number(import.meta.env.VITE_API_DELAY_MS) || 1;
 
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL: API_URL,
   timeout: 10000
 });
 
@@ -41,6 +42,12 @@ export const register = (email, password) =>
 
 export const fetchProfile = () => api.get('/profile').then(response => response.data.data);
 
+// В документах MongoDB владелец представлен вложенным объектом.
+const normalizeSpace = (space) => ({
+  ...space,
+  occupiedByUserId: space.occupiedBy?.userId ?? space.occupiedByUserId ?? null,
+});
+
 export const fetchSpaces = ({ search, available, sort, limit, offset }, signal) =>
   api.get('/spaces', {
     params: {
@@ -52,7 +59,7 @@ export const fetchSpaces = ({ search, available, sort, limit, offset }, signal) 
     },
     signal
   }).then(response => ({
-    items: response.data.data,
+    items: response.data.data.map(normalizeSpace),
     total: response.data.meta.total,
     hasMore: response.data.meta.hasMore
   }));
@@ -61,19 +68,19 @@ export const fetchStats = signal =>
   api.get('/spaces/stats', { signal }).then(response => response.data);
 
 export const createSpace = space =>
-  api.post('/spaces', space).then(response => response.data);
+  api.post('/spaces', space).then(response => normalizeSpace(response.data));
 
 export const updateSpace = (id, changes) =>
-  api.put(`/spaces/${id}`, changes).then(response => response.data);
+  api.put(`/spaces/${id}`, changes).then(response => normalizeSpace(response.data));
 
 export const deleteSpace = id => api.delete(`/spaces/${id}`);
 
 
 export const occupySpace = id =>
-  api.post(`/spaces/${id}/occupy`).then(r => r.data);
+  api.post(`/spaces/${id}/occupy`).then(r => normalizeSpace(r.data));
 
 export const releaseSpace = id =>
-  api.post(`/spaces/${id}/release`).then(r => r.data);
+  api.post(`/spaces/${id}/release`).then(r => normalizeSpace(r.data));
 
 export const isCanceled = error => axios.isCancel(error);
 

@@ -1,4 +1,6 @@
 require('dotenv').config();
+const { createServer } = require('node:http');
+const attachRealtime = require('./realtime');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -7,7 +9,7 @@ const connectDB = require('./db');
 const authRoutes = require('./routes/auth');
 const spacesRoutes = require('./routes/spaces');
 const { authMiddleware, isAdmin } = require('./middleware/auth');
-const User = require('./models/User');
+const User = require('./models/user');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +20,10 @@ const allowedOrigins = (
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
+
+const server = createServer(app);
+const { publishSpaceChange } = attachRealtime(server, allowedOrigins);
+app.locals.publishSpaceChange = publishSpaceChange;
 
 app.use(
   cors({
@@ -99,7 +105,7 @@ app.use((err, req, res, next) => {
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Сервер запущен на http://localhost:${PORT}`);
     });
   })

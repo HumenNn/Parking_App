@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import useDebounce from '../hooks/useDebounce';
 import useSpaces from '../hooks/useSpaces';
+import LiveParking from './LiveParking';
 import SpaceForm from './SpaceForm';
 import SpaceItem from './SpaceItem';
 import UsersAdmin from './UsersAdmin';
@@ -19,7 +20,7 @@ function sortByNumber(list) {
   });
 }
 
-export default function ParkingPage({ user, notify }) {
+export default function ParkingPage({ user, token, notify }) {
   const [search, setSearch] = useState('');
   const [available, setAvailable] = useState('all');
   const [sort, setSort] = useState('id');
@@ -217,6 +218,7 @@ export default function ParkingPage({ user, notify }) {
 
   return (
     <main className="container">
+      <LiveParking token={token} reload={reload} isSyncing={isSyncing} />
       {canEdit ? (
         <SpaceForm onAdd={addSpace} />
       ) : (

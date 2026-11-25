@@ -1,8 +1,8 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const connectDB = require('./db');
-const User = require('./models/User');
-const ParkingSpace = require('./models/ParkingSpace');
+const User = require('./models/user');
+const ParkingSpace = require('./models/parkingspace');
 
 async function seed() {
   await connectDB();
